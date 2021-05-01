@@ -30,14 +30,8 @@ jobs:
     
     - name: Publish
       run: dotnet publish
-    
-    - name: Upload WebApp1 Build Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: Publish.Core
-        path: /home/runner/work/chambers/chambers/src/Publish.Core/bin/Debug/net5.0/publish/
-    
-    - name: Upload WebApp2 Build Artifact
+
+    - name: Upload Publish.Api Build Artifact
       uses: actions/upload-artifact@v2
       with:
         name: Publish.Api
