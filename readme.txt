@@ -11,12 +11,12 @@ In solution root folder
 ---
 Build
 ---
-λ dotnet build
+λ dotnet build --no-restore
 
 ---
 Test
 ---
-λ dotnet test
+λ dotnet test --no-build --verbosity normal
 
 ---
 Run
@@ -34,4 +34,3 @@ In src/Publish.Api
 Once running, open swagger ui in a browser https://localhost:5001/swagger 
 and test with the "Try me out" functionality.
 ---
-
