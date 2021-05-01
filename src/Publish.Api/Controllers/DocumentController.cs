@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Publish.Api.Commands;
 using Publish.Api.Models;
 using Publish.Api.Queries;
-using Publish.Core.Interfaces;
 using System;
 using System.Linq;
 using System.Net.Mime;
@@ -20,19 +19,13 @@ namespace Publish.Api.Controllers
     {
         private ILogger<DocumentController> Logger { get; }
         private IMediator Mediator { get; }
-        private IFileValidationService FileValidationService { get; }
-        private IFileService FileService { get; }
 
         public DocumentController(
             ILogger<DocumentController> logger,
-            IMediator mediator,
-            IFileValidationService fileValidationService,
-            IFileService fileService)
+            IMediator mediator)
         {
             Logger = logger;
             Mediator = mediator;
-            FileValidationService = fileValidationService;
-            FileService = fileService;
         }
 
         [HttpGet]
@@ -68,7 +61,8 @@ namespace Publish.Api.Controllers
                 return NotFound("Document could not be found in system");
             }
 
-            var fileContents = await FileService.ReadFile(doc);
+            var fileReadQuery = new FileReadQuery(doc);
+            var fileContents = await Mediator.Send(fileReadQuery, cancellationToken);
             if (fileContents == null)
             {
                 return NotFound("Document could not be found in storage");
@@ -82,7 +76,8 @@ namespace Publish.Api.Controllers
         [ProducesResponseType(Status400BadRequest)]
         public async Task<IActionResult> Post(IFormFile file, CancellationToken cancellationToken)
         {
-            if (FileValidationService.Validate(file) is ValidationError validation)
+            var validationQuery = new FileValidationQuery(file);
+            if (await Mediator.Send(validationQuery, cancellationToken) is ValidationError validation)
             {
                 return BadRequest(validation.ErrorMessage);
             }

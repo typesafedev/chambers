@@ -37,7 +37,6 @@ namespace Publish.Api
             // Scans Startup assembly and added handlers, preprocessors, postprocessors implementations to container
             services.AddMediatR(typeof(Startup).GetTypeInfo().Assembly);
 
-            services.AddScoped<IFileValidationService, FileValidationService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IFileSystem, FileSystem>();
         }

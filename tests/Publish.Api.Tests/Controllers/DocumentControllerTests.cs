@@ -35,8 +35,8 @@ namespace Publish.Api.Tests.Controllers
             file.Setup(x => x.Length).Returns(1);
             file.Setup(x => x.OpenReadStream()).Returns(Stream.Null);
             var success = fixture.Create<ValidationSuccess>();
-            var fileValidationService = fixture.Freeze<Mock<IFileValidationService>>();
-            fileValidationService.Setup(x => x.Validate(file.Object)).Returns(success);
+            mediator.Setup(x => x.Send(It.IsAny<FileValidationQuery>(), CancellationToken.None))
+                .ReturnsAsync(success);
             var sut = fixture.Create<DocumentController>();
 
             // When
@@ -56,8 +56,8 @@ namespace Publish.Api.Tests.Controllers
             var file = fixture.Freeze<Mock<IFormFile>>();
             file.Setup(x => x.Length).Returns(1);
             var error = new ValidationError("File is not Pdf");
-            var fileValidationService = fixture.Freeze<Mock<IFileValidationService>>();
-            fileValidationService.Setup(x => x.Validate(file.Object)).Returns(error);
+            mediator.Setup(x => x.Send(It.IsAny<FileValidationQuery>(), CancellationToken.None))
+                .ReturnsAsync(error);
 
             var sut = fixture.Create<DocumentController>();
 
@@ -79,8 +79,8 @@ namespace Publish.Api.Tests.Controllers
             var file = fixture.Freeze<Mock<IFormFile>>();
             file.Setup(x => x.Length).Returns(1);
             var error = new ValidationError("File is too large");
-            var fileValidationService = fixture.Freeze<Mock<IFileValidationService>>();
-            fileValidationService.Setup(x => x.Validate(file.Object)).Returns(error);
+            mediator.Setup(x => x.Send(It.IsAny<FileValidationQuery>(), CancellationToken.None))
+                .ReturnsAsync(error);
             var sut = fixture.Create<DocumentController>();
 
             // When
@@ -100,8 +100,8 @@ namespace Publish.Api.Tests.Controllers
             var mediator = fixture.Freeze<Mock<IMediator>>();
             var file = fixture.Freeze<Mock<IFormFile>>(); 
             var error = new ValidationError("File is empty");
-            var fileValidationService = fixture.Freeze<Mock<IFileValidationService>>();
-            fileValidationService.Setup(x => x.Validate(file.Object)).Returns(error);
+            mediator.Setup(x => x.Send(It.IsAny<FileValidationQuery>(), CancellationToken.None))
+                .ReturnsAsync(error);
             var sut = fixture.Create<DocumentController>();
 
             // When
@@ -140,7 +140,8 @@ namespace Publish.Api.Tests.Controllers
             fixture.Customize<BindingInfo>(c => c.OmitAutoProperties());
             var mediator = fixture.Freeze<Mock<IMediator>>();
             var dtos = fixture.CreateMany<DocumentDto>().OrderByDescending(x => x.Name);
-            mediator.Setup(x => x.Send(It.IsAny<AllDocumentsQuery>(), CancellationToken.None)).ReturnsAsync(dtos);
+            mediator.Setup(x => x.Send(It.IsAny<AllDocumentsQuery>(), CancellationToken.None))
+                .ReturnsAsync(dtos);
             var sut = fixture.Create<DocumentController>();
 
             // When
@@ -180,8 +181,10 @@ namespace Publish.Api.Tests.Controllers
             fixture.Customize<BindingInfo>(c => c.OmitAutoProperties());
             var mediator = fixture.Freeze<Mock<IMediator>>();
             var document = fixture.Create<Document>();
-            mediator.Setup(x => x.Send(It.IsAny<DocumentQuery>(), CancellationToken.None)).ReturnsAsync(document);
-            mediator.Setup(x => x.Send(It.IsAny<DeleteDocumentCommand>(), CancellationToken.None)).ReturnsAsync(Unit.Value);
+            mediator.Setup(x => x.Send(It.IsAny<DocumentQuery>(), CancellationToken.None))
+                .ReturnsAsync(document);
+            mediator.Setup(x => x.Send(It.IsAny<DeleteDocumentCommand>(), CancellationToken.None))
+                .ReturnsAsync(Unit.Value);
             var fileService = fixture.Freeze<Mock<IFileService>>();
             var sut = fixture.Create<DocumentController>();
 

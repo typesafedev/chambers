@@ -30,4 +30,8 @@
     <ProjectReference Include="..\..\src\Publish.Api\Publish.Api.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
 </Project>
