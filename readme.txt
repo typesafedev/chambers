@@ -35,5 +35,3 @@ Once running, open swagger ui in a browser https://localhost:5001/swagger
 and test with the "Try me out" functionality.
 ---
 
-TODO
-Deploy to netlify
